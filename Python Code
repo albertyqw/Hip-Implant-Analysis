@@ -1,0 +1,169 @@
+# team29: wangy615, dhillj22, mansfies, innesm1
+# DP2: "Hip to be Square" 
+# - analyzing design paramaters
+# December 5th, 2018
+
+import math # we'll import a math library to simplify calculations
+
+def titlesequence ():
+    print(" __      __   _                    _         _                    ___ ___ _    ")
+    print(" \ \    / /__| |__ ___ _ __  ___  | |_ ___  | |_ ___ __ _ _ __   |_  ) _ ( )___")
+    print("  \ \/\/ / -_) / _/ _ \ '  \/ -_) |  _/ _ \ |  _/ -_) _` | '  \   / /\_, //(_-<")
+    print("   \_/\_/\___|_\__\___/_|_|_\___|  \__\___/  \__\___\__,_|_|_|_| /___|/_/  /__/")
+    print("")
+    print("            _____  ____   ___    ______ ______       __  __ ____ ____ ")
+    print("           / ___/ / __ \ /   |  / ____// ____/      / / / //  _// __ \ ")
+    print("           \__ \ / /_/ // /| | / /    / __/ ______ / /_/ / / / / /_/ /")
+    print("          ___/ // ____// ___ |/ /___ / /___/_____// __  /_/ / / ____/ ")
+    print("         /____//_/    /_/  |_|\____//_____/      /_/ /_//___//_/      ")
+    print("")
+    print("   ___             _               ___                               __             ")
+    print("  / _ \ ___  ___  (_)___ _ ___    / _ \ ___ _ ____ ___ _ __ _  ___  / /_ ___  ____ ")
+    print(" / // // -_)(_-< / // _ `// _ \  / ___// _ `// __// _ `//  ' \/ -_)/ __// -_)/ __/")
+    print("/____/ \__//___//_/ \_, //_//_/ /_/    \_,_//_/   \_,_//_/_/_/\__/ \__/ \__//_/   ")
+    print("                   /___/                                                           ")
+    print("   ___               __            _        ___                                  ")
+    print("  / _ |  ___  ___ _ / /__ __ ___  (_)___   / _ \ ____ ___  ___ _ ____ ___ _ __ _ ")
+    print(" / __ | / _ \/ _ `// // // /(_-< / /(_-<  / ___// __// _ \/ _ `// __// _ `//  ' \ ")
+    print("/_/ |_|/_//_/\_,_//_/ \_, //___//_//___/ /_/   /_/   \___/\_, //_/   \_,_//_/_/_/")
+    print("                     /___/                               /___/                   ")
+    print("")
+    print("")
+    print("                  ________ ")
+    print("             #*   \       \ ")
+    print("            ##**   \       \____________________________________")
+    print("           ###*** __\      |   Sophie    |                __    \ ")
+    print("          =======|_|      |    Megan     |               /  \    \ ")
+    print("      ===========|__       |   Albert    |   Team #29   | <> |    }")
+    print("          =======|_|_     |    Jasdeep   |               \__/    /")
+    print("            ###***  /      |_____________|______________________/")
+    print("             ##**  /       /")
+    print("              #*  /_______/")
+    print("")
+    print("")
+    print("")
+    print("")
+
+  
+def menu (): # A menu will appear onscreen. If the user enters a value outside the range of 1-4,
+             # they'll be prompted to try again. If the value is acceptable, the program will
+             # proceed through the conditionals above.
+    
+    print("\nWelcome to the Hip Analysis Program Menu:")
+    print("\t1. Subprogram 1")
+    print("\t2. Subprogram 2")
+    print("\t3. Subprogram 3")
+    print("\t4. Exit from program")
+    choice = int(input("\nPlease enter a number corresponding to your option from the menu: "))
+    if 1 >> choice or choice >> 4:
+        choice = int(input("\nPlease try again: "))
+    return choice
+
+def subprogram1(bodyWeight, canalDiameter,ultTenStrength):
+    
+    load = 3.5 * bodyWeight 
+    delta = 1
+
+    print("Given that Mr. Honsou's body weight is roughly", bodyWeight,"N...")
+    print("and considering the anatomy of his femur and the implant strength...")
+    
+
+    while delta > 0.001: # subprogram1 will iterate through the steps below until the error is < 0.01 mm 
+        axial_stress = (-2744/(((math.pi/4) * ((0.5*canalDiameter)**2))))
+        bending_stress = ((58996)/((math.pi/64)*((0.5*canalDiameter)**3)))
+        appTenStress = (axial_stress + bending_stress)
+        f_d = appTenStress - ultTenStrength
+        axial_stress_p = 87808 /(math.pi* (canalDiameter**3))
+        bending_stress_p = -90617856/(math.pi*(canalDiameter**4))
+        f_d_p = (axial_stress_p + bending_stress_p)
+        delta = (abs(0-f_d))
+        canalDiameter = canalDiameter - (f_d/f_d_p)
+        # Using Newton's method of finding roots, we iterate through stress calculations until the difference
+        # between the applied tensile strength is close to our stem material's UTS ~ 1111 MPa.
+    
+    print("The minimum stem diameter he'll need is ", round(canalDiameter, 2),"mm.")
+    print("The applied tensile stress at this diameter is", round(appTenStress, 2),"MPa.")
+    
+def subprogram2(bodyWeight, teamnumber):
+
+    in_file = open('SN Data - Sample Metal.txt', 'r')
+    row_split = []
+    stress_amp = []
+    num_cyc = []
+    for line in in_file:
+        row_split = line.split()
+        stress_amp.append(float(row_split[0]))
+        num_cyc.append(int(row_split[1]))
+    in_file.close()
+
+    cyclical_load = 10 * bodyWeight
+    stem_diameter = 16
+    cross_sectional_area = (math.pi * (0.5 * stem_diameter) ** 2) #assume to be circular (using stemDia)
+    maximum_stress = cyclical_load / cross_sectional_area
+    minimum_stress = -maximum_stress
+    theoretical_stress_amp = (maximum_stress - minimum_stress)/2
+
+    for i in range(len(stress_amp)):
+        k_n = 6 + math.log(num_cyc[i],10) ** (teamnumber / 30)
+        stress_max = theoretical_stress_amp * k_n
+        if stress_max >= stress_amp[i]:
+            stressFail = stress_amp[i]
+            print("The maximum stress amplitude that corresponds to failure is:", stressFail)
+            cyclesFail = num_cyc[i]
+            print("The maximum number of cycles before failure is:", cyclesFail)
+            break
+        
+def  subprogram3 (bodyWeight, modulusBone, modulusImplant):
+    
+    axial_stress = (23520/(((math.pi) * ((0.5*16)**2)))) #N (Uniform; different from P1)
+    stressReduc = (axial_stress*((2*modulusBone)/(modulusBone + modulusImplant))**0.5)
+    ERatio = ((modulusImplant/modulusBone)**0.5)
+    print("The reduced compressive stress is: ", stressReduc)
+    x = 0
+    for x in range(50):
+        compStrength = (0.001*(x**2)-3.437*x*ERatio+181.72)
+        if compStrength <= stressReduc:
+            print("The modulus ratio is: ", ERatio)
+            yrsFail = print("The number of years before risk of femoral fracture is: ",x)
+            stressFail = print("The compressive stress on the bone at failure is: ", compStrength)
+            break
+def main ():
+
+    titlesequence()
+    teamnumber = 29 
+    outerDia = 34 # Djimon's outer femur diameter (mm)
+    canalDiameter = 18 # Djimon's femur marrow cavity diameter (mm)
+    canalOffset = 43 # the distance from the center of Djimon's femur to the center of his femoral head (mm)
+    modulusBone = 18.5 # the elastic modulus of cortical bone (GPa), [citation needed]
+    ultTenStrength = 1111 # the ultimate tensile strength of ??? (MPa)
+    modulusImplant = 110 # the elastic modulus of ??? (GPa)
+    bodyWeight = 784.8 # Djimon's weight (N)
+    stemDia = 20 # the chosen cross-sectional diameter of our implant stem
+       
+    choice = 1 
+    while choice != 4: # The program will contiunally provide the menu so long as the user doesn't
+                       # choose to exit. 
+        choice = menu()
+        if choice == 1:
+            subprogram1(bodyWeight, canalDiameter, ultTenStrength)
+        elif choice == 2:
+            subprogram2(bodyWeight, teamnumber)
+        elif choice == 3:
+            subprogram3(bodyWeight, modulusBone, modulusImplant)
+        elif choice == 4:
+            print("\nProgram exited.")
+            exit()
+
+main()
+
+"""
+BIBLIOGRAPHY
+
+McDonald, C. P., Grandfield, K.,
+
+    “IBEHS 1P10: Health Solutions Design Projects I,” iBioMed Project Modules, 2018
+
+S. B. Gabriel, J. Dille, M. C. Rezende, P. Mei, L. H. D. Almeida, R. Baldan, and C. A. Nunes,
+
+    “Mechanical Characterization of Ti–12mo–13nb Alloy for Biomedical Application Hot Swaged and Aged,” Materials Research, vol. 18, no. suppl 2, pp. 8–12, 2015.
+"""
